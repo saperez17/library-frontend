@@ -38,7 +38,7 @@ const Authors = (props) => {
           )}
         </tbody>
       </table>
-      <BirthYearForm/>
+      <BirthYearForm authors={result.data.allAuthors.map(item => ({ value: item.name, label:item.name }))}/>
     </div>
   )
 }
