@@ -3,11 +3,6 @@ import { EDIT_AUTHOR_BIRTH_YEAR } from "queries";
 import { useMutation } from "@apollo/client";
 import Select from "react-select";
 
-const options = [
-  { value: "chocolate", label: "Chocolate" },
-  { value: "strawberry", label: "Strawberry" },
-  { value: "vanilla", label: "Vanilla" },
-];
 
 const BirthYearForm = (props) => {
   const [name, setName] = useState("");

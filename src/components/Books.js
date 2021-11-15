@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { useQuery } from '@apollo/client';
+import React, { useState, useEffect } from 'react';
+import { useLazyQuery } from '@apollo/client';
 import { ALL_BOOKS } from 'queries';
 
 const Books = (props) => {
 
-  const result = useQuery(ALL_BOOKS);
+  const [getBooks, { loading, error, data }] = useLazyQuery(ALL_BOOKS);
   const [ filter, setFilter ] = useState('');
 
   const onFilterChange = (filterValue) => {
@@ -14,21 +14,29 @@ const Books = (props) => {
     setFilter(filterValue)
   }
 
+  useEffect(()=>{
+    getBooks({ variables: { genre: filter }});
+    console.log('data',data);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter])
+
   if (!props.show) {
     return null
   }
-  if (result.loading){
+  if (loading){
     return <div>...loading</div>
   }
 
-  if (!result.data.allBooks.length) {
+  if (error) return `Error! ${error}`;
+
+  if (!data.allBooks.length) {
     return <div>no results</div>
   }
 
-  const allGenres = result.data.allBooks.map(book => book.genres).flat();
+  const allGenres = data.allBooks.map(book => book.genres).flat().filter((v, i, a) => a.indexOf(v) === i);
   const filteredBooks = !filter
-  ? result.data.allBooks
-  : result.data.allBooks.filter(book => book.genres.includes(filter) ? book : null)
+  ? data.allBooks
+  : data.allBooks.filter(book => book.genres.includes(filter) ? book : null)
 
   return (
     <div>

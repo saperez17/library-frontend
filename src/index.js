@@ -7,23 +7,38 @@ import {
   HttpLink,
   InMemoryCache,
 } from "@apollo/client";
-import { setContext } from '@apollo/client/link/context';
+import { setContext } from "@apollo/client/link/context";
 
 const authLink = setContext((_, { headers }) => {
-  const token = localStorage.getItem('libraryapp-user-token')
+  const token = localStorage.getItem("libraryapp-user-token");
   return {
     headers: {
       ...headers,
       authorization: token ? `bearer ${token}` : null,
-    }
-  }
-})
+    },
+  };
+});
 
-const httpLink = new HttpLink({ uri: 'http://localhost:4000' })
+const httpLink = new HttpLink({ uri: "http://localhost:4000" });
 
 const client = new ApolloClient({
-  cache: new InMemoryCache(),
-  link: authLink.concat(httpLink)
+  cache: new InMemoryCache({
+    // typePolicies: {
+    //   Query: {
+    //     fields: {
+    //       allBooks: {
+    //         read(_, { args, toReference }) {
+    //           return toReference({
+    //             __typename: "allBooks",
+    //             genre: args.genre,
+    //           });
+    //         },
+    //       },
+    //     },
+    //   },
+    // },
+  }),
+  link: authLink.concat(httpLink),
 });
 
 ReactDOM.render(
