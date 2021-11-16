@@ -4,8 +4,9 @@ import Books from "components/Books";
 import NewBook from "components/NewBook";
 import Login from "components/Login";
 import Recommendations from "components/Recommendations";
-import { useApolloClient } from "@apollo/client";
-
+import { useApolloClient, useSubscription } from "@apollo/client";
+import { BOOK_ADDED } from 'queries';
+import { updateCacheWith } from 'utils';
 const getToken = () => localStorage.getItem("libraryapp-user-token");
 
 const App = () => {
@@ -13,6 +14,14 @@ const App = () => {
   const [token, setToken] = useState(getToken());
   const client = useApolloClient();
 
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      if (subscriptionData.data){
+        // console.log('subscriptionData.data.bookAdded', subscriptionData.data.bookAdded);
+        updateCacheWith(subscriptionData.data.bookAdded, client);
+      }
+    }
+  })
   const logout = () => {
     setToken(null);
     localStorage.clear();
